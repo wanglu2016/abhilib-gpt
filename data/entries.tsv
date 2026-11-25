@@ -1,0 +1,24 @@
+id	名稱	宣告	釋義	出處
+T01	有覆無記色唯初靜慮繫	Article.articleOnlyFirst	依文章五段接合。P04、P11、P14 由分類定義承擔，P05 只進入第2至4步支線。參數中保留十二個原文前提和五項橋接。	R01 R02 R03
+T02	從「得」到所得法	Experiments.viaAcquisition	《正理》卷十二直接提到初靜慮染身語表業之得。模型分開記錄每一得的所得法、每一所論色有相應得，以及對文句的逐物解讀。	R01
+T03	從有覆表的繫地推到有覆色	Experiments.viaManifest	《正理》卷三十六限定有覆表的繫地，另證有覆無記色屬於表。	R02 R03
+T04	省去前提16的完整長證	Article.withoutP16	其餘前提、五項橋接與目標相同。比較 T01 與本條的參數可以直接看到差別。	R03
+T05	由同所斷直接得到見所斷惑	Article.seeingDirect	用第8步取得相應惑，將心的見所斷性由前提3傳給惑。	R03
+T06	長證前提有共同的非空模型	Witness.consistentSample	兩種心聚、一個初定有覆語表同時滿足十六項與五個橋接。這是邏輯上的相容見證。	R03
+T07	有覆無記色是表色	Experiments.coveredManifest	由染色是業與無表有記排出無表。	R03
+T08	四條局部規則的短證	Experiments.onlyFirst	採用色業、無表、表的繫地、欲界排除四條規則，單條移除的反例列在實驗室。	R03
+T09	有餘師亦容同一範圍結論	Experiments.otherFirst	容許上三靜慮無覆表，仍能排除上地有覆表。	R03
+T10	二定無覆語表區別兩說	Experiments.distinguish	此候選色滿足有餘師的範圍條件，與前說的表業範圍相衝突。	R03
+T11	初定繫不足以推出有覆	Experiments.converseFails	一個初定善語表是逆命題的反例。	R03
+T12	容許有覆色的局部模型	Experiments.coveredConsistent	具體見證是初定有覆語表。	R03
+T13	也有完全不含有覆色的非空模型	Experiments.coveredOptional	只納入一個欲界善語表的模型即可。與 T12 合讀可區分範圍與存在。	R03
+T14	善心中六與七的三種讀法	Experiments.sixVersusSeven	分別計算《雜心》、《俱舍》及王路所校《正理》的善心現前容得心之聯集。	R05 R06 R07
+T15	同得六心，兩張名單的差別	Experiments.whichSix	欲善、欲無覆在兩種六心說中互換。	R05 R06 R07
+T16	七心須同取兩個爭議成員	Experiments.sevenIff	在共同五個成員固定的模型中，七心等價於同時納入欲善與欲無覆。	R05 R07
+T17	不能全離仍容新斷一品	Experiments.partialPossible	只知少於九品，數值一仍符合限制。	R08 R07
+T18	不能全離也容一品未斷	Experiments.noPartialPossible	同一限制也容許零。	R08 R07
+T19	加入斷道條件才可排除分離	Experiments.noNewGrade	須解釋此位為何沒有任何能斷之道；單排除聖道仍需考慮世間道。	R08 R07
+T20	撤去染色屬業	Experiments.dropK	欲界其餘色可成反例。	R03
+T21	撤去無表有記	Experiments.dropA	欲界有覆無表可成反例。	R03
+T22	撤去表的繫地限制	Experiments.dropG	二定有覆語表可成反例。	R03
+T23	撤去欲界排除	Experiments.dropD	欲界有覆身表可成反例。	R03
