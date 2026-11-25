@@ -1,0 +1,17 @@
+name: Verify AbhiLib
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned Lean release
+        run: |
+          version=$(sed 's|^leanprover/lean4:v||' lean-toolchain)
+          curl --fail --silent --show-error --location --retry 3 "https://github.com/leanprover/lean4/releases/download/v${version}/lean-${version}-linux.tar.zst" -o "$RUNNER_TEMP/lean.tar.zst"
+          tar --zstd -xf "$RUNNER_TEMP/lean.tar.zst" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/lean-${version}-linux/bin" >> "$GITHUB_PATH"
+      - run: python3 tools/build.py --check
+      - run: lake env lean tools/Transfer.lean
