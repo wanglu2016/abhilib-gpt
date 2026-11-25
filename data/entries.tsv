@@ -23,3 +23,20 @@ T21	撤去無表有記	Experiments.dropA	欲界有覆無表可成反例。	R03
 T22	撤去表的繫地限制	Experiments.dropG	二定有覆語表可成反例。	R03
 T23	撤去欲界排除	Experiments.dropD	欲界有覆身表可成反例。	R03
 T24	五段長證的接合	Article.assemble	取第14步的見斷相應惑作輸入，接合第22、26、33、37、38、45、46等步。兩種長證在此匯合。	R03 R04
+T25	無記心必有漏	MindClasses.neutralWithOutflow	窮盡十二心。無漏的學、無學心均善，無記心只可能落在十種有漏心之中。	H08 H09 R12
+T26	一一有漏法兼攝苦、集二諦	Truths.bothOfOutflow	在有部四諦攝法表中取同一法，分別按果義、因義判攝。諦別可以有二，所指仍是一法。	H07 R13
+T27	阿羅漢最後心為無覆無記	LastMind.finalClear	按威儀路、異熟生兩種情形分證。H01 限定心的細類，H02 將細類轉到四性。	H01 H02
+T28	阿羅漢最後心是有漏心	LastMind.finalWithOutflow	由最後心無覆無記，應用一切無記心有漏的通則。	T27 T25
+T29	阿羅漢最後心是苦諦、集諦	LastMind.finalBothTruths	此處問最後一念心本身攝於何諦。它是有漏法，故就果義攝苦、就因義攝集。這個推論無須引入後有。	T28 T26 H07 R16
+T30	持沙門果者是聖者	Attainment.fruitHolderNoble	由當前位次的分類推出，適用四果。得果後已進修者仍依所持之果判定。	R14 R18
+T31	生欲界、梵世而已離欲的聖者兼成就淨、無漏初靜慮	Nonreturn.lowerPossessesBoth	分梵世愛已盡、未盡兩案，從各案保留共同的兩類。	H05 H06 R15
+T32	已離欲的聖者成就無漏初靜慮	Nonreturn.detachedNobleFirst	遍歷生地。欲界、梵世用下二案的共同結論；梵世以上直接用聖者的上生規則。	T31 H04
+T33	阿那含成就無漏根本初靜慮	Nonreturn.nonreturnFirstUndefiled	不還者為聖者，並已離欲。將這兩個條件代入 T32。所識別的種類是無漏。	H03 T30 T32
+T34	阿那含必然成就初靜慮	Nonreturn.nonreturnFirst	無漏初靜慮即為一個具體見證，故存在其所成就的一種根本初靜慮。結論談當下持有。	T33 C28
+T35	生梵世上的聖者不成就淨初靜慮	Nonreturn.higherLacksMundaneFirst	在根本等至三分法中，淨專指有漏善。此項可與成就無漏初靜慮同時成立。	H04 R15
+T36	最後心後無續心，仍可攝於集諦	CaseModels.lastWithoutSuccessor	兩念的有限片段：先有無學道心，末念為欲界威儀心。核對兩條心類規則、集諦歸屬及末念無後繼。這是相容見證。	H01 H02 H07 R17
+T37	必成就初靜慮，不能加強成必成就淨初靜慮	CaseModels.higherCounterexample	以生第二靜慮的不還者作局部見證，逐一滿足 H03–H06，同時成就無漏初靜慮而不成就淨初靜慮。	H03 H04 H05 H06 T35
+T38	有漏心在四諦攝法表中的定位	LastMind.domainOfOutflow	將十二心的有漏分類接到適用於各種法的諦攝表。後續心類命題可直接使用。	H09 H07
+T39	第二題四條文獻輸入的逐條刪除試驗	CaseModels.eachNonreturnInputNeeded	在本模型裡，每撤 H03–H06 中任一條，就能給出滿足其餘三條、持不還果卻不成就根本初靜慮的反模型。它限定這組輸入，並未窮盡其他證明路線。	H03 H04 H05 H06 T34
+T40	刪去般涅槃心的限制	CaseModels.missingTerminalRule	保留心類標記的一致性，撤 H01，則末念標記可落在道心，無法保證攝於集諦。	H01 H02 T29
+T41	刪去細目與十二心的一致性	CaseModels.missingModeTyping	保留 H01，撤 H02，則模型能把無學道心錯標為威儀路。這項反例指出兩套分類相接時所用的條件。	H01 H02 T29

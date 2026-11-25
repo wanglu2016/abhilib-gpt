@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = 'https://github.com/wanglu2016/abhilib-gpt/blob/main/'
-TABLES = ('steps', 'premises', 'bridges', 'entries', 'sources', 'concepts')
+TABLES = ('steps', 'premises', 'bridges', 'entries', 'sources', 'concepts', 'rules', 'topics')
 
 
 def read_table(name):
@@ -39,6 +39,8 @@ def catalogue():
                     row.update(verse=fields[0], refs=['R10'])
                 else:
                     row.update(refs=fields[0].split())
+            elif group == 'rules':
+                row.update(decl=fields[0], role=fields[1], note=fields[2], refs=fields[3].split())
             elif group == 'entries':
                 row.update(decl=fields[0], note=fields[1], refs=fields[2].split())
             elif group == 'sources':
@@ -66,16 +68,13 @@ def lean_entries(entries):
     assert len(reports) == len(by_name)
     for audit in reports:
         row = by_name[audit['name']]
-        parts = row['decl'].split('.')
-        file = 'AbhiLib/' + (parts[0] if len(parts) == 2 else 'Core') + '.lean'
-        contents = (ROOT / file).read_text()
-        m = re.search(r'^(?:def|theorem) ' + parts[-1] + r'\b', contents, re.M)
-        if not m:
-            raise ValueError(audit['name'])
-        snippet = contents[m.start():]
-        stop = re.search(r'\n(?:def |theorem |abbrev |/--|end |inductive |namespace |variable )', snippet)
-        row.update(code=snippet[:stop.start() if stop else len(snippet)].strip(),
-                   src=REPO + file + '#L' + str(contents[:m.start()].count('\n') + 1),
+        file = audit['module'].replace('.', '/') + '.lean'
+        start, end = audit['start'], audit['end']
+        lines = (ROOT / file).read_text().splitlines()
+        if not 1 <= start <= end <= len(lines):
+            raise ValueError((audit['name'], start, end))
+        row.update(code='\n'.join(lines[start - 1:end]),
+                   src=REPO + file + '#L' + str(start),
                    axioms=sorted(audit['axioms']))
         for field, target in [('body', 'calls'), ('type', 'parameters')]:
             row[target] = [by_name[n]['id'] for n in audit[field] if n in by_name and n != audit['name']]
@@ -88,7 +87,7 @@ def main():
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
     run('lake', 'build')
-    for path in (ROOT / 'AbhiLib').glob('*.lean'):
+    for path in (ROOT / 'AbhiLib').rglob('*.lean'):
         if re.search(r'\b(sorry|admit|axiom|native_decide)\b', path.read_text()):
             raise ValueError(f'unreviewed proof escape or global assumption in {path}')
     entries = lean_entries(catalogue())

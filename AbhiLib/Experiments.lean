@@ -1,4 +1,6 @@
 import AbhiLib.Article
+import AbhiLib.MindClasses
+import AbhiLib.Attainment
 namespace AbhiLib.Experiments
 
 abbrev K (x : Rupa) := Stain x.nature → ColorKarma x
@@ -50,9 +52,6 @@ theorem viaManifest (x : Rupa) (k : K x) (a : A x)
     (reading : Covered x → Manifest x → x.ground = .first) (c : Covered x) : x.ground = .first :=
   reading c (coveredManifest x k a c)
 
-inductive Mind12 where
-  | desireGood | desireBad | desireCovered | desireClear | formGood | formCovered | formClear
-  | formlessGood | formlessCovered | formlessClear | learner | adept deriving DecidableEq
 def minds : List Mind12 := [.desireGood,.desireBad,.desireCovered,.desireClear,.formGood,.formCovered,
   .formClear,.formlessGood,.formlessCovered,.formlessClear,.learner,.adept]
 theorem exhaustiveMinds : minds.Nodup ∧ ∀ c : Mind12, c ∈ minds := by
@@ -73,7 +72,7 @@ theorem whichSix (m : Mind12) : allows false true m ≠ allows true false m ↔
 theorem sevenIff (a b : Bool) : (roster a b).length = 7 ↔ a = true ∧ b = true := by
   cases a <;> cases b <;> decide
 
-abbrev Grades := Fin 10
+abbrev Grades := Attainment.Grades
 theorem partialPossible : (1 : Grades).val < 9 ∧ (1 : Grades).val ≠ 0 := by decide
 theorem noPartialPossible : (0 : Grades).val < 9 ∧ (0 : Grades).val = 0 := by decide
 theorem noNewGrade (n : Grades) (effectivePath : Prop) (needed : 0 < n.val → effectivePath)
