@@ -191,6 +191,21 @@ function reader(context,trace){
    note('「只在」限制主詞所屬之部，沒有倒推出該部一切法皆屬主詞。');
    return cls(m[1],m[2],'yes');
   }
+  if(m=s.match(/^習(.+?)時[，,](?:如果|若)(得修|得)(.+?)[，,](?:也)?(?:一定會|必然|必|就會|則)(得修|得)(.+)$/)){
+   const chosen=m[1].match(/^餘(有漏|無漏)$/);
+   let practiced;
+   if(chosen){
+    const base=choose(context,'level',levelNames.map(x=>({value:x,label:x})),'「餘」排除哪一地？請從所在段落確定。');
+    practiced=and(atom(chosen[1],'D','d'),not(atom(base,'D','d')));
+    note('「餘」展開為此法不屬於'+base+'。');
+   }else practiced=group(m[1],'D','d');
+   const relation=m[2]==='得' || m[4]==='得' ? choose(context,'gainSense',[
+    {value:'cultivation',label:'依本段術語取「得修」'},{value:'acquisition',label:'取一般的「得」'}],'這裡的「得」指得修，還是一般的得？') : 'cultivation';
+   const action=word=>word==='得修'||relation==='cultivation'?'acquired':'gains';
+   note('時位、如果、必然三處共用同一人位。'+(relation==='cultivation'?'得依得修義。':'未加「修」的得取一般獲得義。'));
+   const ongoing=some('d','D',and(practiced,rel('active','s','d')));
+   return all('s','S',imp(and(ongoing,has('s',m[3],'a',action(m[2]))),has('s',m[5],'b',action(m[4]))));
+  }
   if(m=s.match(/^修(淨|無漏|有漏)(初靜慮|第二靜慮|第三靜慮|第四靜慮)?非(?:修)?(淨|無漏|有漏)(初靜慮|第二靜慮|第三靜慮|第四靜慮)?$/)){
    const level=m[2]||choose(context,'level',levelNames.map(x=>({value:x,label:x})),'「修」的賓語省去定地；請查上文所指。');
    const closure=choose(context,'closure',[{value:'case',label:'列舉的一種情形（開放條件）'},{value:'exists',label:'斷言至少有一個此類時位'}],'此短語是在列舉一格，還是在斷言該格有實例？');

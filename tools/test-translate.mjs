@@ -4,7 +4,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {translate} from '../docs/translate/grammar.mjs';
-import {cases} from '../docs/translate/cases.mjs';
+import {cases,fragment} from '../docs/translate/cases.mjs';
 import {leanFile,inspect,backtranslate} from '../docs/translate/logic.mjs';
 
 function ast(text,context){
@@ -13,7 +13,7 @@ function ast(text,context){
  return result.ast;
 }
 const samples=cases.map(c=>ast(c.text,c.defaults));
-assert.deepEqual(samples.map(x=>x.op),['all','all','some','some','not','all','and','all','open','all']);
+assert.deepEqual(samples.map(x=>x.op),['all','all','some','some','not','all','and','all','all','all']);
 for(const tree of samples){assert.ok(inspect(tree).length);assert.ok(backtranslate(tree).length>10);}
 assert.equal(samples[1].body.op,'iff');
 assert.equal(ast('色處是十八界中的色界').body.op,'imp');
@@ -34,7 +34,13 @@ assert.deepEqual(['成就','現前','得'].map(v=>ast('阿那含'+v+'初靜慮')
 assert.equal(translate('修淨非無漏').field,'level');
 assert.equal(translate('修淨非無漏',{level:'初靜慮'}).field,'closure');
 assert.equal(ast('修淨非無漏',{level:'第二靜慮',closure:'exists'}).op,'some');
-assert.deepEqual(ast('修淨初靜慮非修無漏初靜慮',{closure:'case'}),samples[8]);
+const openCase=ast(fragment.text,fragment.defaults);
+assert.deepEqual(ast('修淨初靜慮非修無漏初靜慮',{closure:'case'}),openCase);
+assert.equal(translate(cases[8].text).field,'level');
+assert.equal(translate(cases[8].text,{level:'初靜慮'}).field,'gainSense');
+assert.equal(samples[8].body.r.body.xs[1].id,'acquired');
+assert.equal(ast(cases[8].text,{level:'初靜慮',gainSense:'acquisition'}).body.r.body.xs[1].id,'gains');
+assert.deepEqual(ast('習無漏時，若得修淨初靜慮，必得修無漏初靜慮').body.r,samples[8].body.r);
 assert.equal(translate('只成就無漏初靜慮').field,'subject');
 const only='阿那含只成就無漏初靜慮';
 assert.equal(translate(only).field,'only');
@@ -96,10 +102,10 @@ example (w : Reading) (h : reading3 w) : ∃ x, ¬ w.dharmaMark .karma x := by
   obtain ⟨x, _, hx⟩ := h
   exact ⟨x, hx⟩
 
-example (w : Reading) (s : w.S) : Prop := reading9 w s
+example (w : Reading) (s : w.S) : Prop := reading11 w s
 end AbhiReading
 `;
-  writeFileSync(path,leanFile([...samples,ast(only,{only:'levels'}),ast('慧能與學心相應')])+smoke);
+  writeFileSync(path,leanFile([...samples,openCase,ast(only,{only:'levels'}),ast('慧能與學心相應')])+smoke);
   execFileSync('lean',[path],{stdio:'inherit'});
  }finally{rmSync(dir,{recursive:true});}
 }

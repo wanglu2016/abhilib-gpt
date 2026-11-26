@@ -84,8 +84,8 @@ export function backtranslate(root){
  }
  function person(v){return v==='s'?'此人於此時':'該人位 '+v;}
  function action(pair,v){
-  if(pair.op==='rel'&&pair.b===v&&['owns','gains','now'].includes(pair.id))
-   return [person(pair.a),{owns:'成就',gains:'得到',now:'現起'}[pair.id]];
+  if(pair.op==='rel'&&pair.b===v&&['owns','gains','now','active','acquired'].includes(pair.id))
+   return [person(pair.a),{owns:'成就',gains:'得到',now:'現起',active:'習修',acquired:'得修'}[pair.id]];
   if(pair.op==='or'&&pair.xs.length===2){
    const [a,b]=pair.xs;
    if(a.id==='active'&&b.id==='acquired'&&a.a===b.a&&a.b===v&&b.b===v)
@@ -129,6 +129,7 @@ export function backtranslate(root){
    if(n.sort==='S'&&sub)return '對每位符合「'+sub+'」的有情，在該時位，'+read(r);
    if(n.sort==='S'&&l.op==='and'){
     const [state,cond]=l.xs;
+    if(state.op==='some'&&cond.op==='some')return '對每位有情的每一時位，若'+read(state)+'，且'+read(cond)+'，則'+read(r);
     if(classifier(state,n.v))return '對每位符合「'+classifier(state,n.v)+'」的有情，若'+read(cond)+'，則'+read(r);
    }
   }

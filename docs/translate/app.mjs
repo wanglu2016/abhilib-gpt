@@ -1,4 +1,4 @@
-import {cases,edition} from './cases.mjs';
+import {cases,edition,fragment} from './cases.mjs';
 import {translate} from './grammar.mjs';
 import {render,backtranslate,leanFile} from './logic.mjs';
 import {vocab,relations} from './vocabulary.mjs';
@@ -26,6 +26,9 @@ function select(c,hash=true){
  $('source').textContent=c?'《俱舍九題》第'+c.chapter+'題 · 書頁 '+c.page:'自由輸入 · 支援簡體與繁體';
  $('pdf').hidden=!c;if(c)$('pdf').href=edition+'#page='+c.page;
  $('provenance').textContent=c?c.voice+'。'+c.context:'可試「阿那含只成就無漏初靜慮」，或把例句中的否定、前後念、主詞和賓語改掉。';
+ $('related').replaceChildren();
+ if(c?.id==='09')$('related').append(button('另試同段省略句「修淨非無漏」',()=>select(fragment)));
+ if(c?.id===fragment.id)$('related').append(button('回到第 9 例的完整命題',()=>select(cases.find(x=>x.id==='09'))));
  $('restore').hidden=!c;$('check').textContent=c?.check||'檢查反譯是否保留了你所問的對象和限定。';
  if(hash)history.replaceState(null,'','#'+(c?.id||'new'));
  drawList();if(c)convert();else{invalidate();$('input').focus();}
@@ -43,7 +46,7 @@ function invalidate(){
 function contextLine(){
  const entries=Object.entries(context),d=$('context');d.replaceChildren();
  if(!entries.length)return;
- const names={case:'四句中的開放條件',exists:'存在斷言',element:'十八界色境',realm:'三界色界',nature:'只限漏性',levels:'只限四地',both:'漏性與四地兩項限制'};
+ const names={cultivation:'得作得修',acquisition:'得作一般獲得',case:'四句中的開放條件',exists:'存在斷言',element:'十八界色境',realm:'三界色界',nature:'只限漏性',levels:'只限四地',both:'漏性與四地兩項限制'};
  d.append(document.createTextNode('採用的上下文　'+entries.map(([,v])=>names[v]||v).join(' · ')+'　'),button('清除上下文',()=>{context={};convert();}));
 }
 function reviewKey(){return JSON.stringify([example?.id||'new',$('input').value,Object.entries(context).sort(),result.status]);}
@@ -90,7 +93,7 @@ $('restore').onclick=()=>select(example);$('judgment').onchange=record;$('commen
 $('export').onclick=()=>download('AbhiLib-審讀.json',JSON.stringify({version:1,reviews:Object.values(saved)},null,2),'application/json');
 function fromHash(){
  const hash=location.hash.slice(1);
- select(hash==='new'?null:cases.find(c=>c.id===hash)||cases[0],false);
+ select(hash==='new'?null:[...cases,fragment].find(c=>c.id===hash)||cases[0],false);
 }
 window.addEventListener('hashchange',fromHash);
 fromHash();
