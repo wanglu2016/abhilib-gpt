@@ -32,7 +32,7 @@ def catalogue():
             row = dict(id=key, title=title, group=group)
             entries[key] = row
             if group == 'steps':
-                row.update(refs=fields[0].split(), note=next(iter(fields[1:]), ''), decl='Article.' + key.lower())
+                row.update(refs=fields[0].split(), note=next(iter(fields[1:]), ''), decl='本證.' + key.lower())
             elif group in ('premises', 'bridges'):
                 row.update(decl=key)
                 if group == 'premises':
@@ -57,7 +57,9 @@ def catalogue():
 
 
 def lean_entries(entries):
-    by_name = {'AbhiLib.' + e['decl']: e for e in entries.values() if 'decl' in e}
+    def lean_name(decl):
+        return '.'.join(part if part.isascii() else f'«{part}»' for part in decl.split('.'))
+    by_name = {lean_name('AbhiLib.' + e['decl']): e for e in entries.values() if 'decl' in e}
     lead = (ROOT / 'tools/Audit.lean').read_text()
     commands = ['#auditLibrary'] + ['#entry ' + name for name in by_name]
     with tempfile.NamedTemporaryFile(suffix='.lean', mode='w') as tmp:
@@ -90,6 +92,20 @@ def main():
     for path in (ROOT / 'AbhiLib').rglob('*.lean'):
         if re.search(r'\b(sorry|admit|axiom|native_decide)\b', path.read_text()):
             raise ValueError(f'unreviewed proof escape or global assumption in {path}')
+    # Both the library and stand-alone downloads use the same checked Lean declarations.
+    classes = (ROOT / 'AbhiLib/分類.lean').read_text()
+    reading = (ROOT / 'AbhiLib/譯讀.lean').read_text()
+    imported = 'import AbhiLib.«分類»\n'
+    if not reading.startswith(imported):
+        raise ValueError('Update the standalone export when changing the translation imports.')
+    signature = classes + '\n' + reading.removeprefix(imported).lstrip()
+    module = 'export const signature = ' + json.dumps(signature, ensure_ascii=False) + ';\n'
+    browser_model = ROOT / 'docs/translate/model.mjs'
+    if args.check:
+        if browser_model.read_text() != module:
+            raise SystemExit('Translation signature differs. Run python3 tools/build.py.')
+    else:
+        browser_model.write_text(module)
     entries = lean_entries(catalogue())
     model = json.loads(run('lake', 'env', 'lean', '--run', 'tools/Models.lean'))
     assert len(model['rows']) == 112 and len({tuple(r['features']) for r in model['rows']}) == 112

@@ -1,4 +1,4 @@
-import {vocab,relations} from './vocabulary.mjs';
+import {vocab,relations,realmNames,leanNames} from './vocabulary.mjs';
 import {signature} from './model.mjs';
 
 export const pred=(id,v)=>({op:'pred',id,v});
@@ -12,12 +12,15 @@ export const bind=(op,v,sort,body)=>({op,v,sort,body});
 export const all=(v,sort,body)=>bind('all',v,sort,body);
 export const some=(v,sort,body)=>bind('some',v,sort,body);
 
-const sortName={D:'法例',S:'人於一時'};
+const sortName={法:'法例',人位:'人於一時'};
 export function inspect(root){
  const symbols=new Set();
  function check(n,env){
   function arg(v,sort){if(env[v]!==sort)throw Error('變元 '+v+' 所需類型為 '+sort);}
-  if(n.op==='pred'){arg(n.v,vocab[n.id].sort);symbols.add(n.id);}
+  if(n.op==='realmEq'){
+   if(!realmNames.includes(n.l)||!realmNames.includes(n.r))throw Error('兩端都須是三界中的界名');
+   symbols.add(n.l);symbols.add(n.r);
+  }else if(n.op==='pred'){arg(n.v,vocab[n.id].sort);symbols.add(n.id);}
   else if(n.op==='rel'){const r=relations[n.id];arg(n.a,r.sorts[0]);arg(n.b,r.sorts[1]);symbols.add(n.id);}
   else if(['all','some','open'].includes(n.op)){
    if(!sortName[n.sort]||env[n.v])throw Error('變元重複或論域不明');
@@ -33,16 +36,17 @@ export function inspect(root){
 export function render(root,mode='formula'){
  const zh=mode==='chinese', lean=mode==='lean';
  function visit(n){
+  if(n.op==='realmEq')return lean?leanNames(n.l+' = '+n.r):(zh?'「'+n.l+'」和「'+n.r+'」指同一界':n.l+' = '+n.r);
   if(n.op==='pred'){
    const p=vocab[n.id];
-   if(lean)return '('+p.lean+') '+n.v;
+   if(lean)return leanNames(p.lean)+' '+n.v;
    return zh?n.v+' 屬於「'+p.label+'」':p.label+'('+n.v+')';
   }
   if(n.op==='rel'){
    const r=relations[n.id];
-   if(lean)return r.lean+' '+n.a+' '+n.b;
-   if(zh)return n.id==='next'?n.b+' 可以緊接在 '+n.a+' 之後（同一相續）':n.a+' '+r.label+' '+n.b;
-   return ({next:'無間後繼',now:'現前',gains:'得',owns:'成就',active:'習修',acquired:'得修',assoc:'相應'})[n.id]+'('+n.a+', '+n.b+')';
+   if(lean)return leanNames(r.lean)+' '+n.a+' '+n.b;
+   if(zh)return n.id==='無間生'?n.b+' 可以緊接在 '+n.a+' 之後（同一相續）':n.a+' '+r.label+' '+n.b;
+   return n.id+'('+n.a+', '+n.b+')';
   }
   if(n.op==='not')return (zh?'不成立的是「':'¬ (')+visit(n.x)+(zh?'」':')');
   if(n.op==='and'||n.op==='or'){
@@ -55,17 +59,25 @@ export function render(root,mode='formula'){
   }
   const q={all:'∀',some:'∃',open:lean?'fun':'λ'}[n.op];
   if(zh)return ({all:'對每一個',some:'至少有一個',open:'對給定的'})[n.op]+sortName[n.sort]+' '+n.v+'，'+(n.op==='open'?'檢查以下條件：':'')+visit(n.body);
-  if(lean)return '('+q+' ('+n.v+' : w.'+n.sort+')'+(n.op==='open'?' => ':', ')+visit(n.body)+')';
+  if(lean)return '('+q+' ('+n.v+' : '+leanNames('釋.'+n.sort)+')'+(n.op==='open'?' => ':', ')+visit(n.body)+')';
   return '('+q+n.v+' : '+n.sort+'，'+visit(n.body)+')';
  }
  return visit(root);
 }
 export function leanFile(roots){
- return signature+'\n'+roots.map((root,i)=>{
-  inspect(root);
-  const type=root.op==='open'?'w.'+root.sort+' → Prop':'Prop';
-  return 'def reading'+(i+1)+' (w : Reading) : '+type+' :=\n  '+render(root,'lean');
- }).join('\n\n')+'\n\nend AbhiReading\n';
+ return signature+'\nnamespace AbhiLib.«命題譯讀»\n\n'+roots.map((root,i)=>{
+  const symbols=inspect(root);
+  const args=symbols.every(id=>realmNames.includes(id))?'':' («釋» : «詮釋»)';
+  const type=root.op==='open'?leanNames('釋.'+root.sort)+' → Prop':'Prop';
+  return 'def «譯句'+(i+1)+'»'+args+' : '+type+' :=\n  '+render(root,'lean');
+ }).join('\n\n')+'\n\nend AbhiLib.«命題譯讀»\n';
+}
+
+export function termFile(term){
+ const isRealm=realmNames.includes(term.id);
+ const args=isRealm?'':' («釋» : «詮釋»)';
+ const type=isRealm?term.type:term.type.replace(/法|人位/g,sort=>'釋.'+sort);
+ return signature+'\nnamespace AbhiLib.«命題譯讀»\nexample'+args+' : '+leanNames(type)+' := '+leanNames(term.lean)+'\nend AbhiLib.«命題譯讀»\n';
 }
 
 // The paraphrase reads only the tree. Preserve the variable of every witness.
@@ -84,11 +96,11 @@ export function backtranslate(root){
  }
  function person(v){return v==='s'?'此人於此時':'該人位 '+v;}
  function action(pair,v){
-  if(pair.op==='rel'&&pair.b===v&&['owns','gains','now','active','acquired'].includes(pair.id))
-   return [person(pair.a),{owns:'成就',gains:'得到',now:'現起',active:'習修',acquired:'得修'}[pair.id]];
+  if(pair.op==='rel'&&pair.b===v&&['成就','得捨.得','現前','二修.習修','二修.得修'].includes(pair.id))
+   return [person(pair.a),pair.id.split('.').at(-1)];
   if(pair.op==='or'&&pair.xs.length===2){
    const [a,b]=pair.xs;
-   if(a.id==='active'&&b.id==='acquired'&&a.a===b.a&&a.b===v&&b.b===v)
+   if(a.id==='二修.習修'&&b.id==='二修.得修'&&a.a===b.a&&a.b===v&&b.b===v)
     return [person(a.a),'習修或得修'];
   }
   return null;
@@ -103,8 +115,8 @@ export function backtranslate(root){
    const [a,b,r]=n.body.body.xs;
    if(r?.op==='rel'&&r.a===n.v&&r.b===n.body.v){
     const left=classifier(a,n.v),right=classifier(b,n.body.v);
-    if(r.id==='next')return '容有同一相續的兩念，前念符合「'+left+'」，緊接的後念符合「'+right+'」';
-    if(r.id==='assoc')return '容有兩個相應的法，其中一個符合「'+left+'」，另一個符合「'+right+'」';
+    if(r.id==='無間生')return '容有同一相續的兩念，前念符合「'+left+'」，緊接的後念符合「'+right+'」';
+    if(r.id==='相應')return '容有兩個相應的法，其中一個符合「'+left+'」，另一個符合「'+right+'」';
    }
   }
   if(n.op==='some'&&n.body.op==='and'){
@@ -113,7 +125,7 @@ export function backtranslate(root){
    if(term&&act)return act[0]+act[1]+'至少一個符合「'+term+'」的法';
    const other=r.op==='not'?classifier(r.x,n.v):classifier(r,n.v);
    if(term&&other)return '至少有一個'+term+'，'+(r.op==='not'?'不屬於':'屬於')+other;
-   if(n.sort==='S')return '至少有一個人位 '+n.v+' 滿足以下兩項。'+read(n.body);
+   if(n.sort==='人位')return '至少有一個人位 '+n.v+' 滿足以下兩項。'+read(n.body);
   }
   if(n.op==='all'&&n.body.op==='iff'){
    const a=classifier(n.body.l,n.v),b=classifier(n.body.r,n.v);
@@ -126,8 +138,8 @@ export function backtranslate(root){
    if(sub&&r.op==='not'&&classifier(r.x,n.v))return '凡是「'+sub+'」，都不屬於「'+classifier(r.x,n.v)+'」';
    const obj=classifier(r,n.v);
    if(sub&&obj)return '凡是「'+sub+'」，都屬於「'+obj+'」';
-   if(n.sort==='S'&&sub)return '對每位符合「'+sub+'」的有情，在該時位，'+read(r);
-   if(n.sort==='S'&&l.op==='and'){
+   if(n.sort==='人位'&&sub)return '對每位符合「'+sub+'」的有情，在該時位，'+read(r);
+   if(n.sort==='人位'&&l.op==='and'){
     const [state,cond]=l.xs;
     if(state.op==='some'&&cond.op==='some')return '對每位有情的每一時位，若'+read(state)+'，且'+read(cond)+'，則'+read(r);
     if(classifier(state,n.v))return '對每位符合「'+classifier(state,n.v)+'」的有情，若'+read(cond)+'，則'+read(r);

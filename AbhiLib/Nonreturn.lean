@@ -1,54 +1,54 @@
 import AbhiLib.Attainment
 
-namespace AbhiLib.Nonreturn
-open Attainment
+namespace AbhiLib.«不還果論»
+open «成就論»
 
-variable (p : PersonState)
+variable (p : «人位»)
 
 /-- 不還果在此時仍成就，則欲界九品修惑已盡。 -/
-def fruitCutRule := p.standing = .holding .nonReturn → detached p .desire
+def «不還果離欲規則» := p.«所居位» = .«持果» .«不還果» → «已離染» p .«欲界»
 
 /-- 《婆沙》卷一六二，生梵世上。 -/
-def higherRule := noble p.standing → ¬ atOrBelowFirst p.birth →
-  p.possesses .first .undefiled ∧ ¬ p.possesses .first .mundaneGood ∧
-    ¬ p.possesses .first .flavored
+def «生第二靜慮以上規則» := «聖者» p.«所居位» → ¬ «欲界或梵世» p.«生地» →
+  p.«成就» .«初靜慮» .«無漏» ∧ ¬ p.«成就» .«初靜慮» .«淨» ∧
+    ¬ p.«成就» .«初靜慮» .«味相應»
 
 /-- 生欲界或梵世，梵世愛盡。 -/
-def lowerDetachedRule := noble p.standing → atOrBelowFirst p.birth → detached p .first →
-  p.possesses .first .mundaneGood ∧ p.possesses .first .undefiled ∧
-    ¬ p.possesses .first .flavored
+def «生欲梵而梵愛盡規則» := «聖者» p.«所居位» → «欲界或梵世» p.«生地» → «已離染» p .«初靜慮» →
+  p.«成就» .«初靜慮» .«淨» ∧ p.«成就» .«初靜慮» .«無漏» ∧
+    ¬ p.«成就» .«初靜慮» .«味相應»
 
 /-- 生欲界或梵世，下地愛盡而梵世愛未盡。 -/
-def lowerAttachedRule := noble p.standing → atOrBelowFirst p.birth → detached p .desire →
-  ¬ detached p .first → p.possesses .first .flavored ∧
-    p.possesses .first .mundaneGood ∧ p.possesses .first .undefiled
+def «生欲梵而梵愛未盡規則» := «聖者» p.«所居位» → «欲界或梵世» p.«生地» → «已離染» p .«欲界» →
+  ¬ «已離染» p .«初靜慮» → p.«成就» .«初靜慮» .«味相應» ∧
+    p.«成就» .«初靜慮» .«淨» ∧ p.«成就» .«初靜慮» .«無漏»
 
-theorem lowerPossessesBoth (gone : lowerDetachedRule p) (remains : lowerAttachedRule p)
-    (n : noble p.standing) (b : atOrBelowFirst p.birth) (d : detached p .desire) :
-    p.possesses .first .mundaneGood ∧ p.possesses .first .undefiled := by
-  by_cases first : detached p .first
-  · exact ⟨(gone n b first).1, (gone n b first).2.1⟩
-  · exact (remains n b d first).2
+theorem «生欲梵離欲聖者兼成就淨無漏初定» (gone : «生欲梵而梵愛盡規則» p) (remains : «生欲梵而梵愛未盡規則» p)
+    (n : «聖者» p.«所居位») (b : «欲界或梵世» p.«生地») (d : «已離染» p .«欲界») :
+    p.«成就» .«初靜慮» .«淨» ∧ p.«成就» .«初靜慮» .«無漏» := by
+  by_cases «已離初定» : «已離染» p .«初靜慮»
+  · exact ⟨(gone n b «已離初定»).1, (gone n b «已離初定»).2.1⟩
+  · exact (remains n b d «已離初定»).2
 
-theorem detachedNobleFirst (up : higherRule p) (gone : lowerDetachedRule p)
-    (remains : lowerAttachedRule p) (n : noble p.standing) (d : detached p .desire) :
-    p.possesses .first .undefiled := by
-  by_cases low : atOrBelowFirst p.birth
-  · exact (lowerPossessesBoth p gone remains n low d).2
+theorem «離欲聖者成就無漏初定» (up : «生第二靜慮以上規則» p) (gone : «生欲梵而梵愛盡規則» p)
+    (remains : «生欲梵而梵愛未盡規則» p) (n : «聖者» p.«所居位») (d : «已離染» p .«欲界») :
+    p.«成就» .«初靜慮» .«無漏» := by
+  by_cases low : «欲界或梵世» p.«生地»
+  · exact («生欲梵離欲聖者兼成就淨無漏初定» p gone remains n low d).2
   · exact (up n low).1
 
-theorem nonreturnFirstUndefiled (cut : fruitCutRule p) (up : higherRule p)
-    (gone : lowerDetachedRule p) (remains : lowerAttachedRule p)
-    (f : p.standing = .holding .nonReturn) : p.possesses .first .undefiled :=
-  detachedNobleFirst p up gone remains (fruitHolderNoble f) (cut f)
+theorem «不還者成就無漏初靜慮» (cut : «不還果離欲規則» p) (up : «生第二靜慮以上規則» p)
+    (gone : «生欲梵而梵愛盡規則» p) (remains : «生欲梵而梵愛未盡規則» p)
+    (f : p.«所居位» = .«持果» .«不還果») : p.«成就» .«初靜慮» .«無漏» :=
+  «離欲聖者成就無漏初定» p up gone remains («持果者是聖者» f) (cut f)
 
-theorem nonreturnFirst (cut : fruitCutRule p) (up : higherRule p)
-    (gone : lowerDetachedRule p) (remains : lowerAttachedRule p)
-    (f : p.standing = .holding .nonReturn) : hasRoot p .first :=
-  ⟨.undefiled, nonreturnFirstUndefiled p cut up gone remains f⟩
+theorem «不還者成就初靜慮» (cut : «不還果離欲規則» p) (up : «生第二靜慮以上規則» p)
+    (gone : «生欲梵而梵愛盡規則» p) (remains : «生欲梵而梵愛未盡規則» p)
+    (f : p.«所居位» = .«持果» .«不還果») : «成就根本靜慮» p .«初靜慮» :=
+  ⟨.«無漏», «不還者成就無漏初靜慮» p cut up gone remains f⟩
 
-theorem higherLacksMundaneFirst (up : higherRule p)
-    (n : noble p.standing) (b : ¬ atOrBelowFirst p.birth) : ¬ p.possesses .first .mundaneGood :=
+theorem «生第二靜慮以上聖者不成就淨初定» (up : «生第二靜慮以上規則» p)
+    (n : «聖者» p.«所居位») (b : ¬ «欲界或梵世» p.«生地») : ¬ p.«成就» .«初靜慮» .«淨» :=
   (up n b).2.1
 
-end AbhiLib.Nonreturn
+end AbhiLib.«不還果論»

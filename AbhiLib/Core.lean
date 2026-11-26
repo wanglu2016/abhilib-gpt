@@ -1,92 +1,93 @@
+import AbhiLib.«分類»
+
 namespace AbhiLib
 
-inductive Nature where | good | bad | covered | clear deriving DecidableEq
-inductive Ground where | desire | first | second | third | fourth | formless | unbound deriving DecidableEq
-inductive Form where | body | speech | unmanifest | other deriving DecidableEq
-inductive Cut where | seeing | cultivation | neither deriving DecidableEq
-inductive Door where | inner | outer deriving DecidableEq
-inductive Kind where | selfView | extremeView | wrongView | graspView | graspRule | ignorance | other
+inductive «繫不繫» where | «欲界» | «初靜慮» | «第二靜慮» | «第三靜慮» | «第四靜慮» | «無色界» | «不繫» deriving DecidableEq
+inductive «色法種類» where | «身表» | «語表» | «無表» | «其餘» deriving DecidableEq
+inductive «斷類» where | «見所斷» | «修所斷» | «非所斷» deriving DecidableEq
+inductive «所緣門» where | «內門» | «外門» deriving DecidableEq
+inductive «心所分類» where | «有身見» | «邊執見» | «邪見» | «見取» | «戒禁取» | «無明» | «其餘»
   deriving DecidableEq
 
-structure Rupa where
-  form : Form
-  nature : Nature
-  ground : Ground
+structure «色法» where
+  «種類» : «色法種類»
+  «四性判攝» : «四性»
+  «繫屬» : «繫不繫»
   deriving DecidableEq
 
-abbrev Covered (x : Rupa) := x.nature = .covered
-abbrev Stain (n : Nature) := n = .bad ∨ n = .covered
-abbrev GoodOrStained (n : Nature) := n = .good ∨ Stain n
-abbrev Neutral (n : Nature) := n = .covered ∨ n = .clear
-abbrev Manifest (x : Rupa) := x.form = .body ∨ x.form = .speech
-abbrev ColorKarma (x : Rupa) := Manifest x ∨ x.form = .unmanifest
-abbrev Low (g : Ground) := g = .desire ∨ g = .first
-abbrev AboveFirst (g : Ground) := ¬ Low g ∧ g ≠ .unbound
-abbrev UpperThree (g : Ground) := g = .second ∨ g = .third ∨ g = .fourth
-abbrev IsCut (k : Cut) := k ≠ .neither
-abbrev TwoViews (k : Kind) := k = .selfView ∨ k = .extremeView
-abbrev FiveViews (k : Kind) := TwoViews k ∨ k = .wrongView ∨ k = .graspView ∨ k = .graspRule
+abbrev «有覆無記色» (x : «色法») := x.«四性判攝» = .«有覆無記»
+abbrev «染» (n : «四性») := n = .«不善» ∨ n = .«有覆無記»
+abbrev «善或染» (n : «四性») := n = .«善» ∨ «染» n
+abbrev «無記» (n : «四性») := n = .«有覆無記» ∨ n = .«無覆無記»
+abbrev «表色» (x : «色法») := x.«種類» = .«身表» ∨ x.«種類» = .«語表»
+abbrev «色業» (x : «色法») := «表色» x ∨ x.«種類» = .«無表»
+abbrev «欲界或初靜慮» (g : «繫不繫») := g = .«欲界» ∨ g = .«初靜慮»
+abbrev «高於初靜慮之繫地» (g : «繫不繫») := ¬ «欲界或初靜慮» g ∧ g ≠ .«不繫»
+abbrev «上三靜慮» (g : «繫不繫») := g = .«第二靜慮» ∨ g = .«第三靜慮» ∨ g = .«第四靜慮»
+abbrev «所斷» (k : «斷類») := k ≠ .«非所斷»
+abbrev «身邊二見» (k : «心所分類») := k = .«有身見» ∨ k = .«邊執見»
+abbrev «五見» (k : «心所分類») := «身邊二見» k ∨ k = .«邪見» ∨ k = .«見取» ∨ k = .«戒禁取»
 
 /-- 「候選色法」及「此理論所容許的色法」分開。心、心所、所緣是不同論域。 -/
-structure World where
-  admitted : Rupa → Prop
-  Mind : Type
-  Factor : Type
-  Object : Type
-  mc : Mind → Cut
-  fc : Factor → Cut
-  mn : Mind → Nature
-  fnat : Factor → Nature
-  mg : Mind → Ground
-  fg : Factor → Ground
-  mo : Mind → Object
-  fo : Factor → Object
-  door : Object → Door
-  kind : Factor → Kind
-  afflicted : Factor → Prop
-  assoc : Mind → Factor → Prop
-  pureMind : Mind → Prop
-  starts : Mind → Rupa → Prop
-  vicara : Mind → Prop
-  vitarka : Mind → Prop
+structure «論域» where
+  «容許色法» : «色法» → Prop
+  «心» : Type
+  «心所» : Type
+  «所緣境» : Type
+  «心斷類» : «心» → «斷類»
+  «心所斷類» : «心所» → «斷類»
+  «心性» : «心» → «四性»
+  «心所性» : «心所» → «四性»
+  «心繫屬» : «心» → «繫不繫»
+  «心所繫屬» : «心所» → «繫不繫»
+  «心之所緣» : «心» → «所緣境»
+  «心所之所緣» : «心所» → «所緣境»
+  «所緣之門» : «所緣境» → «所緣門»
+  «心所種類» : «心所» → «心所分類»
+  «是惑» : «心所» → Prop
+  «相應» : «心» → «心所» → Prop
+  «無漏心» : «心» → Prop
+  «等起» : «心» → «色法» → Prop
+  «伺» : «心» → Prop
+  «尋» : «心» → Prop
 
-variable (w : World)
-def Inward (c : w.Mind) := w.door (w.mo c) = .inner
-def Outward (c : w.Mind) := w.door (w.mo c) = .outer
-def CanStart (c : w.Mind) := ∃ x, Manifest x ∧ w.starts c x
-def WithView (c : w.Mind) := ∃ f, w.assoc c f ∧ TwoViews (w.kind f)
-def WithIgnorance (f : w.Factor) := w.kind f = .ignorance ∧ ∀ c, w.assoc c f → WithView w c
-def Dyed (x : Rupa) := ∃ c, w.starts c x ∧ ((x.nature = .good ∧ w.mn c = .good) ∨
-  (Stain x.nature ∧ Stain (w.mn c)))
+variable (w : «論域»)
+def «內門轉» (c : w.«心») := w.«所緣之門» (w.«心之所緣» c) = .«內門»
+def «外門轉» (c : w.«心») := w.«所緣之門» (w.«心之所緣» c) = .«外門»
+def «能發表» (c : w.«心») := ∃ x, «表色» x ∧ w.«等起» c x
+def «與身邊見相應» (c : w.«心») := ∃ f, w.«相應» c f ∧ «身邊二見» (w.«心所種類» f)
+def «身邊見俱癡» (f : w.«心所») := w.«心所種類» f = .«無明» ∧ ∀ c, w.«相應» c f → «與身邊見相應» w c
+def «由等起成善染» (x : «色法») := ∃ c, w.«等起» c x ∧ ((x.«四性判攝» = .«善» ∧ w.«心性» c = .«善») ∨
+  («染» x.«四性判攝» ∧ «染» (w.«心性» c)))
 
-def P01 := ∀ f, w.afflicted f → w.fc f = .seeing → w.door (w.fo f) = .inner
-def P02 := ∀ f, FiveViews (w.kind f) → w.fc f = .seeing
-def P03 := ∀ c f, w.assoc c f → w.mo c = w.fo f ∧ w.mc c = w.fc f
-def P04 := ∀ k : Cut, IsCut k → k = .seeing ∨ k = .cultivation
-def P05 := ∀ c, w.mc c = .neither → w.pureMind c
-def P06 := ∀ c, ¬ Stain (w.mn c) → w.mc c ≠ .seeing
-def P07 := (∀ c, Stain (w.mn c) → ∃ f, w.assoc c f ∧ w.afflicted f) ∧
-  (∀ c, w.mn c = .good → ∃ f, w.assoc c f ∧ w.fnat f = .good)
-def P08 := ∀ c, CanStart w c → Outward w c
-def P09 := ∀ f, w.afflicted f → w.fg f = .desire → w.fnat f = .covered →
-  TwoViews (w.kind f) ∨ WithIgnorance w f
-def P10 := ∀ x, w.admitted x → GoodOrStained x.nature → Dyed w x ∧ ColorKarma x
-def P11 := ∀ x, ColorKarma x ↔ Manifest x ∨ x.form = .unmanifest
-def P12 := ∀ c, Outward w c → w.vicara c
-def P13 := ∀ c, AboveFirst (w.mg c) → ¬ w.vitarka c ∧ ¬ w.vicara c
-def P14 := ∀ n : Nature, n = .bad ∨ n = .covered → Stain n
-def P15 := ∀ x, w.admitted x → x.form = .unmanifest → ¬ Neutral x.nature
-def P16 := ∀ f, w.afflicted f → IsCut (w.fc f)
+def P01 := ∀ f, w.«是惑» f → w.«心所斷類» f = .«見所斷» → w.«所緣之門» (w.«心所之所緣» f) = .«內門»
+def P02 := ∀ f, «五見» (w.«心所種類» f) → w.«心所斷類» f = .«見所斷»
+def P03 := ∀ c f, w.«相應» c f → w.«心之所緣» c = w.«心所之所緣» f ∧ w.«心斷類» c = w.«心所斷類» f
+def P04 := ∀ k : «斷類», «所斷» k → k = .«見所斷» ∨ k = .«修所斷»
+def P05 := ∀ c, w.«心斷類» c = .«非所斷» → w.«無漏心» c
+def P06 := ∀ c, ¬ «染» (w.«心性» c) → w.«心斷類» c ≠ .«見所斷»
+def P07 := (∀ c, «染» (w.«心性» c) → ∃ f, w.«相應» c f ∧ w.«是惑» f) ∧
+  (∀ c, w.«心性» c = .«善» → ∃ f, w.«相應» c f ∧ w.«心所性» f = .«善»)
+def P08 := ∀ c, «能發表» w c → «外門轉» w c
+def P09 := ∀ f, w.«是惑» f → w.«心所繫屬» f = .«欲界» → w.«心所性» f = .«有覆無記» →
+  «身邊二見» (w.«心所種類» f) ∨ «身邊見俱癡» w f
+def P10 := ∀ x, w.«容許色法» x → «善或染» x.«四性判攝» → «由等起成善染» w x ∧ «色業» x
+def P11 := ∀ x, «色業» x ↔ «表色» x ∨ x.«種類» = .«無表»
+def P12 := ∀ c, «外門轉» w c → w.«伺» c
+def P13 := ∀ c, «高於初靜慮之繫地» (w.«心繫屬» c) → ¬ w.«尋» c ∧ ¬ w.«伺» c
+def P14 := ∀ n : «四性», n = .«不善» ∨ n = .«有覆無記» → «染» n
+def P15 := ∀ x, w.«容許色法» x → x.«種類» = .«無表» → ¬ «無記» x.«四性判攝»
+def P16 := ∀ f, w.«是惑» f → «所斷» (w.«心所斷類» f)
 
 /-- 相應惑與心同地、同四分性。 -/
-def B01 := ∀ c f, w.assoc c f → w.afflicted f → w.fg f = w.mg c ∧ w.fnat f = w.mn c
+def B01 := ∀ c f, w.«相應» c f → w.«是惑» f → w.«心所繫屬» f = w.«心繫屬» c ∧ w.«心所性» f = w.«心性» c
 /-- 親發有覆表的染心也是有覆，細分有覆、不善。 -/
-def B02 := ∀ c x, Manifest x → w.starts c x → Covered x → Stain (w.mn c) → w.mn c = .covered
+def B02 := ∀ c x, «表色» x → w.«等起» c x → «有覆無記色» x → «染» (w.«心性» c) → w.«心性» c = .«有覆無記»
 /-- 表業與直接發心同繫地。 -/
-def B03 := ∀ c x, Manifest x → w.starts c x → w.mg c = x.ground
+def B03 := ∀ c x, «表色» x → w.«等起» c x → w.«心繫屬» c = x.«繫屬»
 /-- 所容許的每一表業皆有直接發心，涵蓋無覆表。 -/
-def B04 := ∀ x, w.admitted x → Manifest x → ∃ c, w.starts c x
+def B04 := ∀ x, w.«容許色法» x → «表色» x → ∃ c, w.«等起» c x
 /-- 所容許的表業皆有繫地，排除不繫。 -/
-def B05 := ∀ x, w.admitted x → Manifest x → x.ground ≠ .unbound
+def B05 := ∀ x, w.«容許色法» x → «表色» x → x.«繫屬» ≠ .«不繫»
 
 end AbhiLib

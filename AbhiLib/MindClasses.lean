@@ -1,27 +1,27 @@
 import AbhiLib.Core
 
--- Preserve the public name used by the original twelve-mind experiments.
-namespace AbhiLib.Experiments
-inductive Mind12 where
-  | desireGood | desireBad | desireCovered | desireClear | formGood | formCovered | formClear
-  | formlessGood | formlessCovered | formlessClear | learner | adept deriving DecidableEq
-end AbhiLib.Experiments
+-- 供心類分別與得心實驗共用。
+namespace AbhiLib.«分別實驗»
+inductive «十二心» where
+  | «欲界善心» | «欲界不善心» | «欲界有覆心» | «欲界無覆心» | «色界善心» | «色界有覆心» | «色界無覆心»
+  | «無色界善心» | «無色界有覆心» | «無色界無覆心» | «學心» | «無學心» deriving DecidableEq
+end AbhiLib.«分別實驗»
 
-namespace AbhiLib.MindClasses
-open Experiments (Mind12)
+namespace AbhiLib.«心類分別»
+open «分別實驗» («十二心»)
 
 /-- 四性與十二心的對照。《俱舍論》卷七。 -/
-def nature : Mind12 → Nature
-  | .desireBad => .bad
-  | .desireCovered | .formCovered | .formlessCovered => .covered
-  | .desireClear | .formClear | .formlessClear => .clear
-  | .desireGood | .formGood | .formlessGood | .learner | .adept => .good
+def «四性判攝» : «十二心» → «四性»
+  | .«欲界不善心» => .«不善»
+  | .«欲界有覆心» | .«色界有覆心» | .«無色界有覆心» => .«有覆無記»
+  | .«欲界無覆心» | .«色界無覆心» | .«無色界無覆心» => .«無覆無記»
+  | .«欲界善心» | .«色界善心» | .«無色界善心» | .«學心» | .«無學心» => .«善»
 
-def withOutflow : Mind12 → Bool
-  | .learner | .adept => false
+def «有漏» : «十二心» → Bool
+  | .«學心» | .«無學心» => false
   | _ => true
 
-theorem neutralWithOutflow (m : Mind12) (h : Neutral (nature m)) : withOutflow m := by
-  cases m <;> simp_all [nature, Neutral, withOutflow]
+theorem «無記心有漏» (m : «十二心») (h : «無記» («四性判攝» m)) : «有漏» m := by
+  cases m <;> simp_all [«四性判攝», «無記», «有漏»]
 
-end AbhiLib.MindClasses
+end AbhiLib.«心類分別»

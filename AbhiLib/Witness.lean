@@ -1,40 +1,40 @@
 import AbhiLib.Article
-namespace AbhiLib.Witness
-def specimen : Rupa := ⟨.speech,.covered,.first⟩
+namespace AbhiLib.«相容見證»
+def «初定有覆語表» : «色法» := ⟨.«語表»,.«有覆無記»,.«初靜慮»⟩
 /-- 欲界見斷有覆心與初定修斷有覆心各一，後者親發有覆語表。 -/
-def sample : World where
-  admitted x := x = specimen
-  Mind := Bool
-  Factor := Bool
-  Object := Bool
-  mc c := if c then .cultivation else .seeing
-  fc f := if f then .cultivation else .seeing
-  mn _ := .covered
-  fnat _ := .covered
-  mg c := if c then .first else .desire
-  fg f := if f then .first else .desire
-  mo c := c
-  fo f := f
-  door o := if o then .outer else .inner
-  kind f := if f then .other else .selfView
-  afflicted _ := True
-  assoc c f := c = f
-  pureMind _ := False
-  starts c x := c = true ∧ x = specimen
-  vicara c := c = true
-  vitarka c := c = true
+def «示例論域» : «論域» where
+  «容許色法» x := x = «初定有覆語表»
+  «心» := Bool
+  «心所» := Bool
+  «所緣境» := Bool
+  «心斷類» c := if c then .«修所斷» else .«見所斷»
+  «心所斷類» f := if f then .«修所斷» else .«見所斷»
+  «心性» _ := .«有覆無記»
+  «心所性» _ := .«有覆無記»
+  «心繫屬» c := if c then .«初靜慮» else .«欲界»
+  «心所繫屬» f := if f then .«初靜慮» else .«欲界»
+  «心之所緣» c := c
+  «心所之所緣» f := f
+  «所緣之門» o := if o then .«外門» else .«內門»
+  «心所種類» f := if f then .«其餘» else .«有身見»
+  «是惑» _ := True
+  «相應» c f := c = f
+  «無漏心» _ := False
+  «等起» c x := c = true ∧ x = «初定有覆語表»
+  «伺» c := c = true
+  «尋» c := c = true
 
-theorem consistentSample :
-    P01 sample ∧ P02 sample ∧ P03 sample ∧ P04 ∧ P05 sample ∧ P06 sample ∧
-    P07 sample ∧ P08 sample ∧ P09 sample ∧ P10 sample ∧ P11 ∧ P12 sample ∧
-    P13 sample ∧ P14 ∧ P15 sample ∧ P16 sample ∧ B01 sample ∧ B02 sample ∧
-    B03 sample ∧ B04 sample ∧ B05 sample ∧
-    (∃ x, sample.admitted x ∧ Covered x) ∧ (∃ c, sample.mg c = .desire ∧ sample.mn c = .covered) := by
+theorem «前提相容見證» :
+    P01 «示例論域» ∧ P02 «示例論域» ∧ P03 «示例論域» ∧ P04 ∧ P05 «示例論域» ∧ P06 «示例論域» ∧
+    P07 «示例論域» ∧ P08 «示例論域» ∧ P09 «示例論域» ∧ P10 «示例論域» ∧ P11 ∧ P12 «示例論域» ∧
+    P13 «示例論域» ∧ P14 ∧ P15 «示例論域» ∧ P16 «示例論域» ∧ B01 «示例論域» ∧ B02 «示例論域» ∧
+    B03 «示例論域» ∧ B04 «示例論域» ∧ B05 «示例論域» ∧
+    (∃ x, «示例論域».«容許色法» x ∧ «有覆無記色» x) ∧ (∃ c, «示例論域».«心繫屬» c = .«欲界» ∧ «示例論域».«心性» c = .«有覆無記») := by
   simp [P01, P02, P03, P04, P05, P06, P07, P08, P09, P10, P11, P12, P13, P14, P15,
-    P16, B01, B02, B03, B04, B05, CanStart, Inward, Outward, TwoViews, FiveViews, GoodOrStained,
-    Stain, IsCut, Dyed, ColorKarma, AboveFirst, Low, Manifest, Covered, Neutral,
-    sample, specimen, Bool.forall_bool, Bool.exists_bool]
+    P16, B01, B02, B03, B04, B05, «能發表», «內門轉», «外門轉», «身邊二見», «五見», «善或染»,
+    «染», «所斷», «由等起成善染», «色業», «高於初靜慮之繫地», «欲界或初靜慮», «表色», «有覆無記色», «無記»,
+    «示例論域», «初定有覆語表», Bool.forall_bool, Bool.exists_bool]
   constructor
-  · exact Article.s01
+  · exact «本證».s01
   · intro x _ hx; subst x; rfl
-end AbhiLib.Witness
+end AbhiLib.«相容見證»

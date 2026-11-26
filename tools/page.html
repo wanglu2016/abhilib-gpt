@@ -5,7 +5,7 @@
 <script>
 const DATA=/*:DATA:*/;
 const entries=DATA.entries, repo="https://github.com/wanglu2016/abhilib-gpt";
-let trad=false;try{trad=localStorage.getItem("abhi-script")==="t"}catch{}
+let trad=true;try{trad=localStorage.getItem("abhi-script")!=="s"}catch{}
 const el=id=>document.getElementById(id), esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])), simple=s=>Array.from(s,c=>DATA.translation[c]||c).join(""), f=s=>esc(trad?s:simple(s)), link=(id,label,cl="")=>'<a class="'+cl+'" href="#'+esc(id)+'">'+f(label)+'</a>', go=(id,cl="chip")=>link(id,id+" "+entries[id].title.replace(/。$/,""),cl);
 const groupName={steps:"文章步驟",premises:"原文前提",bridges:"橋接條件",entries:"定理與模型",concepts:"概念",sources:"文獻",rules:"論書規則與分類",topics:"命題導讀"};
 const sections=[[1,14,"從見斷心找到相應惑"],[15,22,"由內門排除親發表業"],[23,33,"排除欲界有覆表"],[34,38,"限定表業的繫地"],[39,48,"從有覆色推到有覆表"]];
