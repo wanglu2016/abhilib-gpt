@@ -1,0 +1,18 @@
+<!doctype html><html lang="zh-Hant"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="逐句檢查《俱舍九題》的中文如何轉為公式，並改寫原句重試。">
+<title>命題譯讀 · AbhiLib 毘曇庫</title><link rel="stylesheet" href="style.css">
+</head><body>
+<header><div class="head"><a href="../" class="brand">AbhiLib <span>毘曇庫</span></a><a href="https://github.com/wanglu2016/abhilib-gpt/tree/main/docs/translate">程式原始碼 ↗</a></div></header>
+<main><div class="intro"><h1>命題譯讀</h1><p>把中文譯為公式，再從公式讀回中文。你可以改一個字，檢查意思是否跟著改變。</p></div>
+<div class="workspace"><nav aria-label="選擇書中命題"><div class="navhead"><h2>《俱舍九題》十例</h2><button id="blank">自擬命題</button></div><div id="list"></div><button class="export" id="export">匯出我的審讀記錄</button></nav>
+<article><section class="paper"><div class="bar"><span id="source"></span><a id="pdf" target="_blank" rel="noopener">對照原書 ↗</a></div>
+<h2 id="title"></h2><div id="provenance"></div><label for="input">待譯原句</label><textarea id="input" rows="3" maxlength="600" spellcheck="false"></textarea>
+<p id="original" class="panelnote" hidden></p><div class="actions"><button id="convert" class="primary">轉成公式</button><button id="restore">還原書中原句</button></div>
+<div id="context"></div><details class="help"><summary>可以怎樣試這個工具？</summary>
+<p>可用書中詞彙另組分類、存在、成就及前後心等句。試把「有業道非業」改成「業道非業」，或在自擬命題輸入「阿那含只成就無漏初靜慮」。兩種語義可選時，先比較候選反譯，再決定取哪一種。</p>
+<p>公式以「法的個例」與「人於一時」為論域。「能」在容許的情形中尋找實例。詞表逐項給出解釋，有些概念仍以分類標記表示。每次轉換都可以審讀或匯出。</p></details></section>
+<section class="paper results" aria-live="polite"><div class="bar"><h2>譯讀結果</h2><span id="status"></span></div><div id="output"></div></section>
+<section id="review" class="paper"><h2>我的判讀</h2><p id="check"></p><div class="reviewrow"><label for="judgment">這次翻譯</label><select id="judgment"><option value="">尚未判讀</option><option>符合原意</option><option>需要修改</option><option>尚難判定</option></select></div><label for="comment">批註</label><textarea id="comment" rows="2" placeholder="哪個詞、方向或限定需要改？"></textarea><small>記錄留在這個瀏覽器，可以匯出。</small></section>
+</article></div>
+</main><script type="module" src="app.mjs"></script></body></html>

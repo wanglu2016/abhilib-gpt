@@ -102,6 +102,7 @@ def main():
     html = template.replace('/*:DATA:*/', payload)
     path = ROOT / 'docs/index.html'
     if args.check:
+        run('node', 'tools/test-translate.mjs', '--lean')
         if path.read_text() != html:
             raise SystemExit('Research page differs. Run python3 tools/build.py and commit docs/index.html.')
     else:

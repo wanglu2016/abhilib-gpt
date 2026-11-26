@@ -4,6 +4,14 @@
 
 [进入研究工作台](https://wanglu2016.github.io/abhilib-gpt/) · [逐步读王路的证明](https://wanglu2016.github.io/abhilib-gpt/#S01) · [前提与反例实验](https://wanglu2016.github.io/abhilib-gpt/#lab)
 
+## 从一句中文开始
+
+[打开独立的命题译读工具](https://wanglu2016.github.io/abhilib-gpt/translate/) · [输入自己的命题](https://wanglu2016.github.io/abhilib-gpt/translate/#new)
+
+左栏十例摘自王路《俱舍九题》，每条可打开电子书对应页。输入框接受简体、繁体和改写句。以第 3 例为例，删掉「有業道非業」的「有」再转换，比较究竟是在说某些业道，还是在说所有业道。第 9 例可以清除书页提供的上下文，自行判断「修淨非無漏」的定地以及这句话是否断言有实例。
+
+程序用词表和句法把输入组装成带类型的逻辑树，从同一棵树生成公式、中文反译和 Lean 文件。页面会显示必要的解释选择。尚未覆盖的说法会显示卡在哪一步。你可以逐句批注并导出记录。[实现、适用范围与复核方法](docs/translate/README.md)
+
 ## 两道可以接着研究的命题
 
 | 命题 | 证明用到什么 | 可以检验的界限 |
@@ -29,14 +37,14 @@
 
 ## 在本地复核
 
-安装 [Lean / Elan](https://lean-lang.org/install/) 和 Python 3，进入仓库。项目锁定 Lean 4.19.0，仅依赖 Lean 本身及 Python 标准库。
+安装 [Lean / Elan](https://lean-lang.org/install/) 、Python 3 和 Node.js 18 或以上版本，进入仓库。项目锁定 Lean 4.19.0。命题译读工具没有第三方 JavaScript 依赖。
 
 ```sh
 python3 tools/build.py --check
 lake env lean tools/Transfer.lean
 ```
 
-第一条命令编译证明，逐条检查所依赖的全局公理，核对编号和引用，从 Lean 导出112个候选模型描述及三张得心名册，并检查网页是否为同一份结果。第二条命令验证十个迁移小题。提交和拉取请求使用同一组命令。直接双击 `docs/index.html` 可离线阅读。编辑条目后运行 `python3 tools/build.py` 重建页面。
+第一条命令编译证明，逐条检查所依赖的全局公理，核对编号和引用，从 Lean 导出112个候选模型描述及三张得心名册，并检查网页是否为同一份结果。第二条命令验证十个迁移小题。提交和拉取请求使用同一组命令。直接双击 `docs/index.html` 可离线阅读证明工作台。命题译读工具请使用下述说明中的本地 HTTP 入口。编辑条目后运行 `python3 tools/build.py` 重建页面。
 
 ## 如何扩展
 
